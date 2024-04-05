@@ -12,24 +12,24 @@ class AppWidget {
   static TextStyle headlinetext() {
     return const TextStyle(
         color: Colors.black,
-        fontSize: 24.0,
+        fontSize: 25.0,
         fontWeight: FontWeight.bold,
-        fontFamily: 'Poppins');
+        fontFamily: 'Poppins-SemiBold');
   }
 
   static TextStyle lighttext() {
     return const TextStyle(
-        color: Colors.black87,
-        fontSize: 15.0,
-        fontWeight: FontWeight.w300,
-        fontFamily: 'Poppins');
+        color: Colors.black,
+        fontSize: 16.0,
+        fontWeight: FontWeight.w400,
+        fontFamily: 'Poppins-SemiBold');
   }
 
   static TextStyle semiboldtext() {
     return const TextStyle(
         color: Colors.black87,
-        fontSize: 18.0,
+        fontSize: 20.0,
         fontWeight: FontWeight.bold,
-        fontFamily: 'Poppins');
+        fontFamily: 'Poppins-SemiBold');
   }
 }

@@ -19,8 +19,8 @@ class _HomeState extends State<Home> {
           top: 50,
           left: 20,
         ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+        child: ListView(
+          
           children: [
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -213,7 +213,68 @@ class _HomeState extends State<Home> {
                   ),
                 ),
               ),
-            )
+            ),
+            const SizedBox(height: 15,),
+            ///////////////////////////////////////////
+            //////////////////////////////////////////
+            ///
+            Container(
+              margin: const EdgeInsets.only(right: 20.0),
+              child: Material(
+                elevation: 5.0,
+                borderRadius: BorderRadius.circular(20),
+                child: Container(
+                  padding: const EdgeInsets.all(5),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Image.asset(
+                        'images/salad2.png',
+                        height: 120,
+                        width: 120,
+                        fit: BoxFit.cover,
+                      ),
+                      const SizedBox(
+                        width: 20,
+                      ),
+                      Column(
+                        children: [
+                          SizedBox(
+                            width: MediaQuery.of(context).size.width / 2,
+                            child: Text(
+                              'Medeteranian Ckeckpea Salad',
+                              style: AppWidget.semiboldtext(),
+                            ),
+                          ),
+                          const SizedBox(
+                            height: 5.0,
+                          ),
+                          SizedBox(
+                            width: MediaQuery.of(context).size.width / 2,
+                            child: Text(
+                              'Fresh and Healthy',
+                              style: AppWidget.lighttext(),
+                            ),
+                          ),
+                          const SizedBox(
+                            height: 5.0,
+                          ),
+                          SizedBox(
+                            width: MediaQuery.of(context).size.width / 2,
+                            child: Text(
+                              "\$25",
+                              style: AppWidget.semiboldtext(),
+                            ),
+                          )
+                        ],
+                      )
+                    ],
+                  ),
+                ),
+              ),
+            ) 
+            ////////////////////////////////////
+            ////////////////////////////////////
           ],
         ),
       ),
