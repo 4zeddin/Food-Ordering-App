@@ -1,10 +1,14 @@
-import 'package:app/pages/auth/login.dart';
-import 'package:app/pages/auth/singup.dart';
+import 'package:app/pages/auth_ui/login.dart';
+import 'package:app/pages/auth_ui/onboard.dart';
+import 'package:app/pages/auth_ui/singup.dart';
 import 'package:app/pages/buttomnav.dart';
 import 'package:app/pages/home.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
   runApp(const MyApp());
 }
 

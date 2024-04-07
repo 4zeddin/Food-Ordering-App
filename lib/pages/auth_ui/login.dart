@@ -1,3 +1,5 @@
+import 'package:app/pages/auth_ui/forgotpassword.dart';
+import 'package:app/pages/auth_ui/singup.dart';
 import 'package:app/widget/widget_support.dart';
 import 'package:flutter/material.dart';
 
@@ -76,11 +78,16 @@ class _LogInState extends State<LogIn> {
                             ),
                           ),
                           const SizedBox(height: 20),
-                          Container(
-                            alignment: Alignment.topRight,
-                            child: Text(
-                              'Forgot Password?',
-                              style: AppWidget.semiboldtext(),
+                          GestureDetector(
+                            onTap: () {
+                              Navigator.push(context, MaterialPageRoute(builder: (context)=>const ForgotPass()));
+                            },
+                            child: Container(
+                              alignment: Alignment.topRight,
+                              child: Text(
+                                'Forgot Password?',
+                                style: AppWidget.semiboldtext(),
+                              ),
                             ),
                           ),
                           const SizedBox(height: 70),
@@ -118,12 +125,19 @@ class _LogInState extends State<LogIn> {
                     ),
                   ),
                   const SizedBox(height: 70),
-                          Text(
-                            'Don\'t have an account? Sign up',
-                            style: AppWidget.semiboldtext(),
-                            textAlign: TextAlign.center,
-                          ),
-                          
+                  GestureDetector(
+                    onTap: () {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => const SingUp()));
+                    },
+                    child: Text(
+                      "Don't have an account? Sign up",
+                      style: AppWidget.semiboldtext(),
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
                 ],
               ),
             ),
