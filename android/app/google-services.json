@@ -1,13 +1,13 @@
 {
   "project_info": {
-    "project_number": "217722253586",
-    "project_id": "foodordringapp-31947",
-    "storage_bucket": "foodordringapp-31947.appspot.com"
+    "project_number": "73398394844",
+    "project_id": "food-ordring-app-781fa",
+    "storage_bucket": "food-ordring-app-781fa.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:217722253586:android:bbd18b6bdd08fb005283cb",
+        "mobilesdk_app_id": "1:73398394844:android:50c1a6645ddbcba962b919",
         "android_client_info": {
           "package_name": "com.example.app"
         }
@@ -15,7 +15,7 @@
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyCFfvUO-ASyA4qEA8WJSe_RXdIWZAnXMws"
+          "current_key": "AIzaSyBa3oQWlKlx0M6u7Y6pxI0rHIQjuRDfE2U"
         }
       ],
       "services": {
