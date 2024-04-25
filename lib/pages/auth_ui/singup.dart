@@ -23,12 +23,12 @@ class _SingUpState extends State<SingUp> {
   regitration() async {
     UserCredential userCredential = await FirebaseAuth.instance
         .createUserWithEmailAndPassword(email: email, password: password);
-    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
         content: Text(
       "Register Successfully",
       style: TextStyle(fontSize: 20),
     )));
-    Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>ButtomNav()));
+    Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>const ButtomNav()));
   }
 
   @override
@@ -156,7 +156,7 @@ class _SingUpState extends State<SingUp> {
                                         regitration();
                                       }
                                     },
-                                    child: Text(
+                                    child: const Text(
                                       'SIGN UP',
                                       style: TextStyle(
                                         color: Colors.white,

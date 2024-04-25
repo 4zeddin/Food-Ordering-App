@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:app/firebase_options.dart';
+import 'package:app/pages/auth_ui/forgotpassword.dart';
 import 'package:app/pages/auth_ui/login.dart';
 import 'package:app/pages/auth_ui/onboard.dart';
 import 'package:app/pages/auth_ui/singup.dart';
@@ -26,7 +27,7 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: const Home(),
+      home: const SingUp(),
     );
   }
 }
