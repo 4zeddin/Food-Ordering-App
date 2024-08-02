@@ -1,17 +1,44 @@
-import 'package:flutter/cupertino.dart';
+import 'package:app/service/database.dart';
+import 'package:app/service/shared_pref.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:app/widget/widget_support.dart';
 import 'package:flutter/widgets.dart';
 
 class Details extends StatefulWidget {
-  const Details({super.key});
+  String image, name, detail, price;
+  Details(
+      {super.key,
+      required this.image,
+      required this.name,
+      required this.detail,
+      required this.price});
 
   @override
   State<Details> createState() => _DetailsState();
 }
 
 class _DetailsState extends State<Details> {
-  int n = 1;
+  int n = 1, total = 0;
+  String? id;
+
+  getthesharedpref() async {
+    id = await SharedPreferenceHelper().getUserId();
+    setState(() {});
+  }
+
+  ontheload() async {
+    await getthesharedpref();
+    setState(() {});
+  }
+
+  @override
+  void initState() {
+    ontheload();
+    total = int.parse(widget.price);
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -29,8 +56,10 @@ class _DetailsState extends State<Details> {
                   color: Colors.black,
                 )),
             Center(
-              child: Image.asset(
-                'images/salad2.png',
+              child: CachedNetworkImage(
+                imageUrl:  widget.image,
+                placeholder: (context, url) => CircularProgressIndicator(),
+                errorWidget: (context, url, error) => Icon(Icons.error),
                 width: MediaQuery.of(context).size.width / 1.2,
                 height: MediaQuery.of(context).size.width / 1.2,
                 fit: BoxFit.fill,
@@ -41,23 +70,27 @@ class _DetailsState extends State<Details> {
             ),
             Row(
               children: [
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Vigie Taco Hash',
-                      style: AppWidget.boldtext(),
-                    ),
-                    Text(
-                      'Fresh and Healthy',
-                      style: AppWidget.boldtext(),
-                    ),
-                  ],
+                Flexible(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        widget.name,
+                        style: AppWidget.boldtext(),
+                      ),
+                      Text(
+                        widget.detail,
+                        overflow: TextOverflow.ellipsis,
+                        style: AppWidget.boldtext(),
+                      ),
+                    ],
+                  ),
                 ),
                 const Spacer(),
                 GestureDetector(
                   onTap: () {
                     ++n;
+                    total = total + int.parse(widget.price);
                     setState(() {});
                   },
                   child: Container(
@@ -83,6 +116,7 @@ class _DetailsState extends State<Details> {
                 GestureDetector(
                   onTap: () {
                     n > 1 ? --n : n;
+                    total = total - int.parse(widget.price);
                     setState(() {});
                   },
                   child: Container(
@@ -140,7 +174,7 @@ class _DetailsState extends State<Details> {
                         style: AppWidget.semiboldtext(),
                       ),
                       Text(
-                        '\$n',
+                        '\$${total.toString()}',
                         style: AppWidget.headlinetext(),
                       ),
                     ],
@@ -148,35 +182,53 @@ class _DetailsState extends State<Details> {
                 ),
                 Padding(
                   padding: const EdgeInsets.only(bottom: 20),
-                  child: Container(
-                    width: MediaQuery.of(context).size.width / 2,
-                    padding: const EdgeInsets.all(12),
-                    decoration: BoxDecoration(
-                        color: Colors.black,
-                        borderRadius: BorderRadius.circular(25)),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        const Padding(
-                          padding: EdgeInsets.only(left: 10),
-                          child: Text(
-                            'Add to Cart',
-                            style: TextStyle(
-                                color: Colors.white,
-                                fontFamily: 'Poppins-SemiBold',
-                                fontSize: 18),
+                  child: GestureDetector(
+                    onTap: () async {
+                      Map<String, dynamic> addFoodToCart = {
+                        'Name': widget.name,
+                        'Total': total.toString(),
+                        'Image': widget.image,
+                        'Quantity': n.toString()
+                      };
+
+                      await DatabaseMethodes().addFoodItem(addFoodToCart, id!);
+                      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                          backgroundColor: Colors.orangeAccent,
+                          content: Text(
+                            "Item has been added Successfully to Cart",
+                            style: TextStyle(fontSize: 18.0),
+                          )));
+                    },
+                    child: Container(
+                      width: MediaQuery.of(context).size.width / 2,
+                      padding: const EdgeInsets.all(12),
+                      decoration: BoxDecoration(
+                          color: Colors.black,
+                          borderRadius: BorderRadius.circular(25)),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          const Padding(
+                            padding: EdgeInsets.only(left: 10),
+                            child: Text(
+                              'Add to Cart',
+                              style: TextStyle(
+                                  color: Colors.white,
+                                  fontFamily: 'Poppins-SemiBold',
+                                  fontSize: 18),
+                            ),
                           ),
-                        ),
-                        Container(
-                            padding: const EdgeInsets.all(5),
-                            decoration: BoxDecoration(
-                                color: Colors.grey,
-                                borderRadius: BorderRadius.circular(8)),
-                            child: const Icon(
-                              Icons.shopping_cart_outlined,
-                              color: Colors.white,
-                            ))
-                      ],
+                          Container(
+                              padding: const EdgeInsets.all(5),
+                              decoration: BoxDecoration(
+                                  color: Colors.grey,
+                                  borderRadius: BorderRadius.circular(8)),
+                              child: const Icon(
+                                Icons.shopping_cart_outlined,
+                                color: Colors.white,
+                              ))
+                        ],
+                      ),
                     ),
                   ),
                 )

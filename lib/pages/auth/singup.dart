@@ -1,49 +1,86 @@
-import 'package:app/pages/auth_ui/forgotpassword.dart';
-import 'package:app/pages/auth_ui/singup.dart';
+import 'package:app/pages/auth/login.dart';
 import 'package:app/pages/buttomnav.dart';
+import 'package:app/service/database.dart';
+import 'package:app/service/shared_pref.dart';
+import 'package:app/widget/content_model.dart';
 import 'package:app/widget/widget_support.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:random_string/random_string.dart';
 
-class LogIn extends StatefulWidget {
-  const LogIn({super.key});
+class SingUp extends StatefulWidget {
+  const SingUp({super.key});
 
   @override
-  State<LogIn> createState() => _LogInState();
+  State<SingUp> createState() => _SingUpState();
 }
 
-class _LogInState extends State<LogIn> {
-  String email = "", password = "";
-  final _formkey = GlobalKey<FormState>();
+class _SingUpState extends State<SingUp> {
+  String name = "", email = "", password = "";
+  TextEditingController namecontroller = TextEditingController();
   TextEditingController emailcontroller = TextEditingController();
   TextEditingController passwordcontroller = TextEditingController();
-  
-  login() async {
-    try{ await FirebaseAuth.instance
-        .signInWithEmailAndPassword(email: email, password: password);
-    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+
+  final _formkey = GlobalKey<FormState>();
+
+  Future<void> registration() async {
+    try {
+      UserCredential userCredential = await FirebaseAuth.instance
+          .createUserWithEmailAndPassword(email: email, password: password);
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
         content: Text(
-      "Logged In Successfully",
-      style: TextStyle(fontSize: 20),
-    )));
-    Navigator.push(
-        context, MaterialPageRoute(builder: (context) => const ButtomNav()));
-    }on FirebaseAuthException catch (e){
-      if (e.code == "user-not-found"){
-        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-            content: Text(
-          "User Not Found",
+          "Register Successfully",
           style: TextStyle(fontSize: 20),
-        )));  
-      } else if (e.code == "wrong-password"){
-        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+        ),
+      ));
+      Navigator.pushReplacement(
+          context, MaterialPageRoute(builder: (context) => const ButtomNav()));
+
+      // Push to DB
+      String id = randomAlphaNumeric(10);
+      Map<String, dynamic> addUserInfo = {
+        "Name": namecontroller.text,
+        "Email": emailcontroller.text,
+        "wallet": "0",
+        "Id": id
+      };
+      await DatabaseMethodes().addUserDetail(addUserInfo, id);
+
+      // Add to Shared Preferences
+      await SharedPreferenceHelper().saveUserId(id);
+      await SharedPreferenceHelper().saveUserName(namecontroller.text);
+      await SharedPreferenceHelper().saveUserEmail(emailcontroller.text);
+      await SharedPreferenceHelper().saveUserWallet("0");
+    } on FirebaseAuthException catch (e) {
+      if (e.code == 'email-already-in-use') {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
             content: Text(
-          "Password Incorrect",
-          style: TextStyle(fontSize: 20),
-        )));
+              "The email address is already in use.",
+              style: TextStyle(fontSize: 20),
+            ),
+          ),
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              "Error: ${e.message}",
+              style: const TextStyle(fontSize: 20),
+            ),
+          ),
+        );
       }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            'Registration failed. Please try again.',
+            style: const TextStyle(fontSize: 20),
+          ),
+        ),
+      );
     }
-  
   }
 
   @override
@@ -93,20 +130,34 @@ class _LogInState extends State<LogIn> {
                           children: [
                             const SizedBox(height: 30),
                             Text(
-                              'Login',
+                              'Sign up',
                               style: AppWidget.headlinetext(),
                               textAlign: TextAlign.center,
                             ),
                             const SizedBox(height: 30),
                             TextFormField(
-                              controller: emailcontroller,
+                              controller: namecontroller,
                               validator: (value) {
-                                if (value == null || value.isEmpty){
-                                  return "please enter field";
-                                }else {
-                                  return null;
+                                if (value == null || value.isEmpty) {
+                                  return 'please Enter name';
                                 }
+                                return null;
                               },
+                              decoration: InputDecoration(
+                                suffixIcon: const Icon(Icons.person_outline),
+                                hintText: 'Name',
+                                hintStyle: AppWidget.semiboldtext(),
+                              ),
+                            ),
+                            const SizedBox(height: 30),
+                            TextFormField(
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return 'please Enter Email';
+                                }
+                                return null;
+                              },
+                              controller: emailcontroller,
                               decoration: InputDecoration(
                                 suffixIcon: const Icon(Icons.email_outlined),
                                 hintText: 'Email',
@@ -115,14 +166,13 @@ class _LogInState extends State<LogIn> {
                             ),
                             const SizedBox(height: 30),
                             TextFormField(
-                              controller: passwordcontroller,
                               validator: (value) {
-                                if (value == null || value.isEmpty){
-                                  return "please enter field";
-                                }else {
-                                  return null;
+                                if (value == null || value.isEmpty) {
+                                  return 'please Enter Password';
                                 }
+                                return null;
                               },
+                              controller: passwordcontroller,
                               obscureText: true,
                               decoration: InputDecoration(
                                 suffixIcon: const Icon(Icons.password_outlined),
@@ -130,29 +180,13 @@ class _LogInState extends State<LogIn> {
                                 hintStyle: AppWidget.semiboldtext(),
                               ),
                             ),
-                            const SizedBox(height: 20),
-                            GestureDetector(
-                              onTap: () {
-                                Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) =>
-                                            const ForgotPassword()));
-                              },
-                              child: Container(
-                                alignment: Alignment.topRight,
-                                child: Text(
-                                  'Forgot Password?',
-                                  style: AppWidget.semiboldtext(),
-                                ),
-                              ),
-                            ),
                             const SizedBox(height: 70),
                             Material(
                               elevation: 5,
                               borderRadius: BorderRadius.circular(20),
                               child: Container(
-                                padding: const EdgeInsets.symmetric(vertical: 8),
+                                padding:
+                                    const EdgeInsets.symmetric(vertical: 8),
                                 decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(20),
                                   gradient: const LinearGradient(
@@ -170,11 +204,12 @@ class _LogInState extends State<LogIn> {
                                       if (_formkey.currentState!.validate()) {
                                         email = emailcontroller.text;
                                         password = passwordcontroller.text;
-                                        login();
+                                        name = namecontroller.text;
+                                        registration();
                                       }
                                     },
                                     child: const Text(
-                                      'LOGIN',
+                                      'SIGN UP',
                                       style: TextStyle(
                                         color: Colors.white,
                                         fontSize: 18,
@@ -191,16 +226,16 @@ class _LogInState extends State<LogIn> {
                       ),
                     ),
                   ),
-                  const SizedBox(height: 70),
+                  const SizedBox(height: 60),
                   GestureDetector(
                     onTap: () {
                       Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => const SingUp()));
+                        context,
+                        MaterialPageRoute(builder: (context) => const LogIn()),
+                      );
                     },
                     child: Text(
-                      "Don't have an account? Sign up",
+                      'Already have an account? Sign in',
                       style: AppWidget.semiboldtext(),
                       textAlign: TextAlign.center,
                     ),

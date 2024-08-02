@@ -1,4 +1,4 @@
-import 'package:app/pages/auth_ui/singup.dart';
+import 'package:app/pages/auth/singup.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 

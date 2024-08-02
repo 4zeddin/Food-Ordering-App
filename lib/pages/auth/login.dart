@@ -1,35 +1,86 @@
-import 'package:app/pages/auth_ui/login.dart';
+import 'package:app/pages/auth/forgotpassword.dart';
+import 'package:app/pages/auth/singup.dart';
 import 'package:app/pages/buttomnav.dart';
-import 'package:app/widget/content_model.dart';
 import 'package:app/widget/widget_support.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
-class SingUp extends StatefulWidget {
-  const SingUp({super.key});
+class LogIn extends StatefulWidget {
+  const LogIn({super.key});
 
   @override
-  State<SingUp> createState() => _SingUpState();
+  State<LogIn> createState() => _LogInState();
 }
 
-class _SingUpState extends State<SingUp> {
-  String name = "", email = "", password = "";
-  TextEditingController namecontroller = new TextEditingController();
-  TextEditingController emailcontroller = new TextEditingController();
-  TextEditingController passwordcontroller = new TextEditingController();
-
+class _LogInState extends State<LogIn> {
+  String email = "", password = "";
   final _formkey = GlobalKey<FormState>();
+  TextEditingController emailcontroller = TextEditingController();
+  TextEditingController passwordcontroller = TextEditingController();
+  
+  login() async {
+    if (email.isEmpty || password.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text(
+            "Email and Password cannot be empty",
+            style: TextStyle(fontSize: 20),
+          ),
+        ),
+      );
+      return;
+    }
 
-  regitration() async {
-    UserCredential userCredential = await FirebaseAuth.instance
-        .createUserWithEmailAndPassword(email: email, password: password);
-    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-        content: Text(
-      "Register Successfully",
-      style: TextStyle(fontSize: 20),
-    )));
-    Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>const ButtomNav()));
+    try {
+      await FirebaseAuth.instance.signInWithEmailAndPassword(
+        email: email,
+        password: password,
+      );
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text(
+            "Logged In Successfully",
+            style: TextStyle(fontSize: 20),
+          ),
+        ),
+      );
+
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => const ButtomNav()),
+      );
+    } on FirebaseAuthException catch (e) {
+      String errorMessage;
+
+      if (e.code == "user-not-found") {
+        errorMessage = "User Not Found";
+      } else if (e.code == "wrong-password") {
+        errorMessage = "Password Incorrect";
+      } else {
+        errorMessage = "${e.message}";
+      }
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            errorMessage,
+            style: const TextStyle(fontSize: 20),
+          ),
+        ),
+      );
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text(
+            "An unexpected error occurred",
+            style: TextStyle(fontSize: 20),
+          ),
+        ),
+      );
+    }
   }
+
 
   @override
   Widget build(BuildContext context) {
@@ -78,34 +129,20 @@ class _SingUpState extends State<SingUp> {
                           children: [
                             const SizedBox(height: 30),
                             Text(
-                              'Sign up',
+                              'Login',
                               style: AppWidget.headlinetext(),
                               textAlign: TextAlign.center,
                             ),
                             const SizedBox(height: 30),
                             TextFormField(
-                              controller: namecontroller,
-                              validator: (value) {
-                                if (value == null || value.isEmpty) {
-                                  return 'please Enter name';
-                                }
-                                return null;
-                              },
-                              decoration: InputDecoration(
-                                suffixIcon: const Icon(Icons.person_outline),
-                                hintText: 'Name',
-                                hintStyle: AppWidget.semiboldtext(),
-                              ),
-                            ),
-                            const SizedBox(height: 30),
-                            TextFormField(
-                              validator: (value) {
-                                if (value == null || value.isEmpty) {
-                                  return 'please Enter Email';
-                                }
-                                return null;
-                              },
                               controller: emailcontroller,
+                              validator: (value) {
+                                if (value == null || value.isEmpty){
+                                  return "please enter field";
+                                }else {
+                                  return null;
+                                }
+                              },
                               decoration: InputDecoration(
                                 suffixIcon: const Icon(Icons.email_outlined),
                                 hintText: 'Email',
@@ -114,13 +151,14 @@ class _SingUpState extends State<SingUp> {
                             ),
                             const SizedBox(height: 30),
                             TextFormField(
-                              validator: (value) {
-                                if (value == null || value.isEmpty) {
-                                  return 'please Enter Password';
-                                }
-                                return null;
-                              },
                               controller: passwordcontroller,
+                              validator: (value) {
+                                if (value == null || value.isEmpty){
+                                  return "please enter field";
+                                }else {
+                                  return null;
+                                }
+                              },
                               obscureText: true,
                               decoration: InputDecoration(
                                 suffixIcon: const Icon(Icons.password_outlined),
@@ -128,13 +166,29 @@ class _SingUpState extends State<SingUp> {
                                 hintStyle: AppWidget.semiboldtext(),
                               ),
                             ),
+                            const SizedBox(height: 20),
+                            GestureDetector(
+                              onTap: () {
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) =>
+                                            const ForgotPassword()));
+                              },
+                              child: Container(
+                                alignment: Alignment.topRight,
+                                child: Text(
+                                  'Forgot Password?',
+                                  style: AppWidget.semiboldtext(),
+                                ),
+                              ),
+                            ),
                             const SizedBox(height: 70),
                             Material(
                               elevation: 5,
                               borderRadius: BorderRadius.circular(20),
                               child: Container(
-                                padding:
-                                    const EdgeInsets.symmetric(vertical: 8),
+                                padding: const EdgeInsets.symmetric(vertical: 8),
                                 decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(20),
                                   gradient: const LinearGradient(
@@ -152,12 +206,11 @@ class _SingUpState extends State<SingUp> {
                                       if (_formkey.currentState!.validate()) {
                                         email = emailcontroller.text;
                                         password = passwordcontroller.text;
-                                        name = namecontroller.text;
-                                        regitration();
+                                        login();
                                       }
                                     },
                                     child: const Text(
-                                      'SIGN UP',
+                                      'LOGIN',
                                       style: TextStyle(
                                         color: Colors.white,
                                         fontSize: 18,
@@ -174,16 +227,16 @@ class _SingUpState extends State<SingUp> {
                       ),
                     ),
                   ),
-                  const SizedBox(height: 60),
+                  const SizedBox(height: 70),
                   GestureDetector(
                     onTap: () {
                       Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (context) => const LogIn()));
+                              builder: (context) => const SingUp()));
                     },
                     child: Text(
-                      'Aleardy have an account? Sign in',
+                      "Don't have an account? Sign up",
                       style: AppWidget.semiboldtext(),
                       textAlign: TextAlign.center,
                     ),
