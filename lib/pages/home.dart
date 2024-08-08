@@ -1,5 +1,6 @@
 import 'package:app/pages/details.dart';
 import 'package:app/pages/order.dart';
+import 'package:app/pages/profile.dart';
 import 'package:app/service/database.dart';
 import 'package:app/service/shared_pref.dart';
 import 'package:app/widget/widget_support.dart';
@@ -55,7 +56,7 @@ class _HomeState extends State<Home> {
                 ),
                 GestureDetector(
                   onTap: () {
-                    Navigator.push(context, MaterialPageRoute(builder: (context) => const Home()));
+                    Navigator.push(context, MaterialPageRoute(builder: (context) => const Cart()));
                   },
                   child: Container(
                     margin: const EdgeInsets.only(right: 20.0),
@@ -63,9 +64,14 @@ class _HomeState extends State<Home> {
                     decoration: BoxDecoration(
                         color: Colors.black,
                         borderRadius: BorderRadius.circular(6)),
-                    child: const Icon(
-                      Icons.shopping_cart_outlined,
-                      color: Colors.white,
+                    child: GestureDetector(
+                      onTap: (){
+                        Navigator.push(context, MaterialPageRoute(builder: (context) => const Cart() ));
+                      },
+                      child: const Icon(
+                        Icons.shopping_cart_outlined,
+                        color: Colors.white,
+                      ),
                     ),
                   ),
                 )

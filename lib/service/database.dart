@@ -30,4 +30,8 @@ class DatabaseMethodes {
           .collection("cart")
           .add(addFoodToCart);
   }
+
+  Future<Stream<QuerySnapshot>> getFoodCart(String name) async {
+    return await FirebaseFirestore.instance.collection(name).snapshots();
+  }
 }

@@ -17,16 +17,16 @@ class _ButtomNavState extends State<ButtomNav> {
   late List<Widget> pages;
   late Widget currentPage;
   late Home homepage;
-  late Order order;
+  late Cart cart;
   late Wallet wallet;
   late Profile profile;
   @override
   void initState() {
     homepage = const Home();
-    order = const Order();
+    cart = const Cart();
     wallet = const Wallet();
     profile = const Profile();
-    pages = [homepage, order, wallet, profile];
+    pages = [homepage, cart, wallet, profile];
     super.initState();
   }
 
