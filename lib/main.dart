@@ -7,7 +7,8 @@ import 'package:app/pages/auth/login.dart';
 import 'package:app/pages/auth/onboard.dart';
 import 'package:app/pages/auth/singup.dart';
 import 'package:app/pages/buttomnav.dart';
-import 'package:app/pages/order.dart';
+import 'package:app/pages/onboard.dart';
+import 'package:app/pages/order.dart'; 
 import 'package:app/pages/home.dart';
 import 'package:app/widget/app_constant.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -35,7 +36,7 @@ class MyApp extends StatelessWidget {
       //   colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
       //   useMaterial3: true,
       // ),
-      home: LogIn(),
+      home: Onboard(),
     );
   }
 }
